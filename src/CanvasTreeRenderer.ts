@@ -39,8 +39,11 @@ export class CanvasTreeRenderer {
 
   renderText = (node: ICanvasNode) => {
     let ctx = this.canvasRef.getContext('2d');
-    const { content, point } = node.attributes;
-    ctx.fillText(content, point[0], point[1]);
+    const { content, point, textAlign = 'left', textBaseline = 'middle', font = '10px sans-serif', maxWidth = undefined } = node.attributes;
+    ctx.textAlign = textAlign;
+    ctx.textBaseline = textBaseline;
+    ctx.font = font;
+    ctx.fillText(content, point[0], point[1], maxWidth);
   }
 
   renderCircle = (node: ICanvasNode) => {
