@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid } from '../../../Main/Grid';
 import { observer } from 'mobx-react-lite';
 import { Button } from './Button';
+import { GRID_SIZE, WIDTH, HEIGHT } from '../../../Main/Game';
 
 export interface IWelcomeSceneProps {
   handleNewGame: any
@@ -16,7 +17,13 @@ export const WelcomeScene = observer((props: IWelcomeSceneProps) => {
   }, [handleNewGame])
   
   return <canvaslayer>
-    <Grid />
+    {/* <Grid
+      startX={0}
+      startY={0}
+      gridSize={GRID_SIZE}
+      height={HEIGHT}
+      width={WIDTH}
+    /> */}
     <Button
       content='Start new game'
       position={btnPos}

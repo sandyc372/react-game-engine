@@ -1,5 +1,4 @@
 import React from 'react';
-import { WIDTH, HEIGHT, GRID_SIZE, tileHeight, tileWidth } from '../../../Main/Game';
 import GameContext from '../../../Main/GameContext';
 import { EVENTS } from '../../../Main/EventProvider';
 import { Entity } from '../../../ECS/Entity';
@@ -9,7 +8,7 @@ import { observer } from 'mobx-react-lite';
 let lastMoved: number = 0;
 
 const isOppositeDir = (currDir: string, targetDir: string) => {
-  switch(currDir) {
+  switch (currDir) {
     case 'up':
       return targetDir === 'down';
     case 'down':
@@ -21,14 +20,37 @@ const isOppositeDir = (currDir: string, targetDir: string) => {
   }
 }
 
+const blink = () => {
+  let lastFired = 0;
+  let curIndex = 0;
+  let colors = ['red', '#707070'];
+  return () => {
+    if (lastFired === 0) {
+      lastFired = Date.now()
+    }
+    if (Date.now() - lastFired > 200) {
+      lastFired = Date.now();
+      curIndex = (curIndex + 1) % 2;
+    }
+    return colors[curIndex]
+  }
+}
+
 export interface ISnakeProps {
-  entity?: Entity
+  entity?: Entity,
+  startX: number;
+  startY: number;
+  width: number;
+  height: number;
+  gridSize: number;
 }
 
 export const Snake = observer((props: ISnakeProps) => {
-  const { entity } = props;
+  const { entity, startX, startY, width, height, gridSize } = props;
   const gameContext = React.useContext(GameContext);
   const { eventProvider } = gameContext;
+  const tileHeight = height / gridSize;
+  const tileWidth = width / gridSize;
 
   React.useLayoutEffect(() => {
     if (!entity) {
@@ -37,8 +59,9 @@ export const Snake = observer((props: ISnakeProps) => {
 
     const setDirection = (direction: string, isDown: boolean) => {
       const directionComponent = entity.components.get('direction')!;
-      if (isDown && !isOppositeDir( directionComponent.value, direction)) {
-        directionComponent.value = direction
+      if (isDown && !isOppositeDir(directionComponent.value, direction)) {
+        directionComponent.value = direction;
+        directionComponent.isStopped = false;
       }
     }
 
@@ -61,6 +84,7 @@ export const Snake = observer((props: ISnakeProps) => {
   }, [entity]);
 
   React.useLayoutEffect(() => {
+    const blinker = blink()
     const moveSnake = () => {
       if (!entity) {
         return
@@ -73,15 +97,20 @@ export const Snake = observer((props: ISnakeProps) => {
       const apprComponent = entity.components.get('appearance')!;
       const directionComponent = entity.components.get('direction')!;
       const lengthComponent = entity.components.get('length')!;
+      const healthComponent = entity.components.get('health')!;
 
       const direction = directionComponent.value;
       const length = lengthComponent.value;
+
+      if (directionComponent.isStopped) {
+        return;
+      }
 
       let delta = [
         direction === 'left' ? -1 : direction === 'right' ? 1 : 0,
         direction === 'up' ? -1 : direction === 'down' ? 1 : 0
       ]
-      
+
       const newOccMatrix: number[][] = [];
       apprComponent.occupancyMatrix.forEach((el: number[], i: number) => {
         if (i === 0) {
@@ -92,20 +121,57 @@ export const Snake = observer((props: ISnakeProps) => {
         }
       })
 
-      if (newOccMatrix.every(el => {
+      if (newOccMatrix.every((el, i) => {
         const x = el[0];
         const y = el[1];
-        return x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE
+        const isDuplicate: boolean = newOccMatrix.slice(0, i).some(pt => pt[0] === x && pt[1] === y);
+        return x >= 0 && x < gridSize && y >= 0 && y < gridSize && !isDuplicate
       })) {
         lastMoved = Date.now();
         runInAction(() => {
           apprComponent.occupancyMatrix = newOccMatrix;
         })
+      } else {
+        // take damage and stop
+        runInAction(() => {
+          directionComponent.isStopped = true;
+          healthComponent.lastDamageTakenOn = Date.now();
+          healthComponent.isRecovering = true;
+        })
       }
     }
 
-    eventProvider.on(EVENTS.UPDATE, moveSnake);
-    return () => eventProvider.off(EVENTS.UPDATE, moveSnake);
+    const checkDamageState = () => {
+      if (!entity) {
+        return
+      }
+      const healthComponent = entity.components.get('health')!;
+      const apprComponent = entity.components.get('appearance')!;
+
+      if (healthComponent.isRecovering === true) {
+        if ((Date.now() - healthComponent.lastDamageTakenOn) > 2000) {
+          // fully recovered
+          runInAction(() => {
+            healthComponent.isRecovering = false;
+          })
+        }
+        runInAction(() => {
+          apprComponent.fill = blinker();
+        })
+      } else {
+        runInAction(() => {
+          apprComponent.fill = '#707070';
+        })
+      }
+    }
+
+    const update = () => {
+      moveSnake();
+      checkDamageState();
+    }
+
+    eventProvider.on(EVENTS.UPDATE, update);
+    return () => eventProvider.off(EVENTS.UPDATE, update);
   }, [entity])
 
   if (!entity) {
@@ -113,8 +179,8 @@ export const Snake = observer((props: ISnakeProps) => {
   }
 
   const apprComponent = entity.components.get('appearance')!;
-  
+
   return apprComponent.occupancyMatrix.map(
-    ([x, y]: number[]) => <canvasrect key={x + '' + y} x={x * tileWidth} y={y * tileHeight} width={tileWidth} height={tileHeight} fill={'#707070'} stroke={'transparent'} strokeWeight={1} />
+    ([x, y]: number[]) => <canvasrect key={x + '' + y} x={x * tileWidth + startX} y={y * tileHeight + startY} width={tileWidth} height={tileHeight} fill={apprComponent.fill} stroke={'transparent'} strokeWeight={1} />
   )
 })

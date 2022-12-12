@@ -1,7 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 
 export class Direction {
-  value: string = 'up'
+  value: string = 'up';
+  isStopped = false;
 
   constructor(direction: string) {
     makeAutoObservable(this);

@@ -85,9 +85,9 @@ export const Scene = observer((props: any) => {
   }, [playerX, playerY, enemyEntity])
 
   return <canvaslayer>
-    <Grid />
+    {/* <Grid /> */}
     {/*  <Path pathSegments={path} indexInPath={indexInPath} /> */}
-    <Enemy entity={enemyEntity} />
-    <Player entity={playerEntity} />
+    {/* <Enemy entity={enemyEntity} />
+    <Player entity={playerEntity} /> */}
   </canvaslayer>
 })

@@ -39,7 +39,9 @@ export class CanvasTreeRenderer {
 
   renderText = (node: ICanvasNode) => {
     let ctx = this.canvasRef.getContext('2d');
-    const { content, point, textAlign = 'left', textBaseline = 'middle', font = '10px sans-serif', maxWidth = undefined } = node.attributes;
+    const { content, point, textAlign = 'left', textBaseline = 'middle', font = '10px sans-serif', maxWidth = undefined, fill = 'black', stroke = 'transparent' } = node.attributes;
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
     ctx.textAlign = textAlign;
     ctx.textBaseline = textBaseline;
     ctx.font = font;

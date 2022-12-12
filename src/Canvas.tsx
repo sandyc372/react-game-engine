@@ -4,6 +4,7 @@ import { CanvasRenderer as NativeCanvasRenderer } from './canvasReconciler';
 import { createNode } from './canvasDom';
 import { CanvasTreeRenderer } from './CanvasTreeRenderer';
 import { SceneManager as SnakeGame } from './games/Snake/SceneManager';
+import './Canvas.css';
 
 export const CanvasWrapper = (props: any) => {
   const canvasRef = React.useRef<any>();
