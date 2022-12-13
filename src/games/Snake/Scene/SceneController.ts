@@ -69,6 +69,7 @@ export class SceneController {
       directionComponent.isStopped = true;
       healthComponent.lastDamageTakenOn = Date.now();
       healthComponent.isRecovering = true;
+      healthComponent.value =  healthComponent.value - 10;
     }
   }
 
