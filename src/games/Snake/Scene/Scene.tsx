@@ -13,11 +13,14 @@ import { PlayArea } from './PlayArea';
 import { GRID_SIZE, WIDTH, HEIGHT } from '../../../Main/Game';
 import { PlayerInfo } from './PlayerInfo';
 import { Health } from './Components/Health';
+import { SceneController } from './SceneController';
+import { EVENTS } from '../../../Main/EventProvider';
+import { Position } from '../../../ECS/Components/Position';
 
 export const Scene = observer((props: any) => {
   const gameContext = React.useContext(GameContext);
   const { ecs, eventProvider } = gameContext;
-  const sceneEntities = ecs.entityMap.get('scene2');
+  const cntroller = React.useRef<SceneController>(new SceneController());
 
   React.useEffect(() => {
     // set up the entities
@@ -33,12 +36,26 @@ export const Scene = observer((props: any) => {
           Array.from(Array(20), (el, i) => ([0, i]))
         )
       ))
-      snakeEntity.components.set('length', new Length(8));
+      snakeEntity.components.set('length', new Length(20));
       snakeEntity.components.set('direction', new Direction('up'))
       snakeEntity.components.set('health', new Health(100))
 
+      const foodEntity = new Entity('food', 'food');
+      foodEntity.components.set('position', new Position(20, 20));
+
       sceneEntities?.set(snakeEntity.name, snakeEntity);
+      sceneEntities?.set(foodEntity.name, foodEntity);
     })
+  }, [])
+
+  React.useLayoutEffect(() => {
+    const update = () => {
+      const sceneEntities = ecs.entityMap.get('scene2');
+      const snakeEntity = sceneEntities?.get('snake');
+      cntroller.current.update(snakeEntity, GRID_SIZE)
+    }
+    eventProvider.on(EVENTS.UPDATE, update);
+    return () => eventProvider.off(EVENTS.UPDATE, update);
   }, [])
 
   return <canvaslayer>

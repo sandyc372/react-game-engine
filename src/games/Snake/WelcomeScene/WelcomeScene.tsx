@@ -10,20 +10,13 @@ export interface IWelcomeSceneProps {
 
 export const WelcomeScene = observer((props: IWelcomeSceneProps) => {
   const { handleNewGame } = props;
-  const [btnPos] = React.useState([25, 25]);
+  const [btnPos] = React.useState([GRID_SIZE / 2, GRID_SIZE / 2]);
 
   const doHandleNewGame = React.useCallback(() => {
     handleNewGame('gameplay-scene')
   }, [handleNewGame])
   
   return <canvaslayer>
-    {/* <Grid
-      startX={0}
-      startY={0}
-      gridSize={GRID_SIZE}
-      height={HEIGHT}
-      width={WIDTH}
-    /> */}
     <Button
       content='Start new game'
       position={btnPos}

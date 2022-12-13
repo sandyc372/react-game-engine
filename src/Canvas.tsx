@@ -1,5 +1,5 @@
 import React from 'react';
-import { Game } from './Main/Game';
+import { Game, WIDTH, HEIGHT } from './Main/Game';
 import { CanvasRenderer as NativeCanvasRenderer } from './canvasReconciler';
 import { createNode } from './canvasDom';
 import { CanvasTreeRenderer } from './CanvasTreeRenderer';
@@ -24,6 +24,6 @@ export const CanvasWrapper = (props: any) => {
     height: '100vh',
     width: '100vw'
   }}>
-    <canvas ref={canvasRef} width={500} height={500} tabIndex={0}/>
+    <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} tabIndex={0}/>
   </div>
 }

@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import GameContext from '../../../Main/GameContext';
 import { Grid } from '../../../Main/Grid';
+import { Food } from './Food';
 import { Snake } from './Snake';
 
 export interface IPlayAreaProps {
@@ -18,6 +19,7 @@ export const PlayArea = observer((props: IPlayAreaProps) => {
   const { ecs, eventProvider } = gameContext;
   const sceneEntities = ecs.entityMap.get('scene2');
   const snakeEntity = sceneEntities?.get('snake');
+  const foodEntity = sceneEntities?.get('food');
   return <canvaslayer>
     <Grid
       startX={startX}
@@ -28,6 +30,14 @@ export const PlayArea = observer((props: IPlayAreaProps) => {
     />
     <Snake
       entity={snakeEntity}
+      startX={startX}
+      startY={startY}
+      width={width}
+      height={height}
+      gridSize={gridSize}
+    />
+    <Food
+      entity={foodEntity}
       startX={startX}
       startY={startY}
       width={width}

@@ -15,21 +15,24 @@ export const Grid = (props: IGridProps) => {
 
   return <React.Fragment>
     {
-      Array.from(Array(gridSize + 1), (el, i) => {
-        i = (i+1) % (gridSize + 1)
+      Array.from(Array(gridSize), (el, i) => {
+        // i = (i+1) % (gridSize + 1)
         const strokeWeight = 2;
-        const x1 = startX;
-        const y1 = startY + i * tileHeight + (i === 0 ? strokeWeight/2 : i === gridSize ? -strokeWeight/2 : 0);
-        const x2 = startX + width;
-        const y2 = startY + i * tileHeight + (i === 0 ? strokeWeight/2 : i === gridSize ? -strokeWeight/2 : 0);
 
-        const x3 = startX + i * tileWidth + (i === 0 ? strokeWeight/2 : i === gridSize ? -strokeWeight/2 : 0);
-        const y3 = startY;
-        const x4 = startX + i * tileWidth + (i === 0 ? strokeWeight/2 : i === gridSize ? -strokeWeight/2 : 0);
-        const y4 = startY + height;
+        const rects = [];
+        for (let x = startX, dx = 0; dx <= gridSize; dx = dx + 1) {
+          rects.push({
+            x: x + dx * tileWidth,
+            y: startY + i * tileHeight,
+            even: (i + dx) % 2
+          })
+        }
         return <React.Fragment key={i}>
-          <canvasline  x1={x1} y1={y1} x2={x2} y2={y2} strokeWeight={strokeWeight} stroke={i === 0 || i === gridSize ? 'black' : '#f0f0f0'}/>
-          <canvasline  x1={x3} y1={y3} x2={x4} y2={y4} strokeWeight={strokeWeight} stroke={i === 0 || i === gridSize ? 'black' : '#f0f0f0'}/>
+          {rects.map((r, k) => <canvasrect key={i + '' + k} x={r.x} y={r.y} width={tileWidth} height={tileHeight} fill={r.even ? '#f0f0f0' : 'transparent'} strokeWeight={1} stroke={'transparent'}/>)}
+          <canvasline  x1={startX} y1={startY} x2={startX + width} y2={startY} strokeWeight={strokeWeight} stroke={'black'}/>
+          <canvasline  x1={startX} y1={startY + height} x2={startX + width} y2={startY + height} strokeWeight={strokeWeight} stroke={'black'}/>
+          <canvasline  x1={startX} y1={startY} x2={startX} y2={startY + height} strokeWeight={strokeWeight} stroke={'black'}/>
+          <canvasline  x1={startX + width} y1={startY} x2={startX + width} y2={startY + height} strokeWeight={strokeWeight} stroke={'black'}/>
         </React.Fragment>
       })
     }

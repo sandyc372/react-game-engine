@@ -55,7 +55,7 @@ export const Button = observer((props: IButtonProps) => {
       point={[position[0] * tileWidth, position[1] * tileHeight]}
       textAlign='center'
       textBaseline='middle'
-      font='bold 14px monospace'
+      font='bold 18px monospace'
       maxWidth={12 * tileWidth}
     />
   </canvaslayer>

@@ -17,16 +17,16 @@ export const PlayerInfo = observer((props: IPlayerInfoProps) => {
       point={[startX + padding, height/2]}
       textAlign='left'
       textBaseline='middle'
-      fill='#707070'
-      font='bold 14px monospace'
+      fill='green'
+      font='bold 22px monospace'
     />
     <canvastext
       content={'Score: 0'}
       point={[width - padding, height/2]}
       textAlign='right'
       textBaseline='middle'
-      fill='#707070'
-      font='bold 14px monospace'
+      fill='blue'
+      font='bold 22px monospace'
     />
   </canvaslayer>;
 })
