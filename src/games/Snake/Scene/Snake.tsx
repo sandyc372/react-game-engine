@@ -72,18 +72,72 @@ export const Snake = observer((props: ISnakeProps) => {
   }
 
   const apprComponent = entity.components.get('appearance')!;
+
   const head = apprComponent.occupancyMatrix[0];
+  const tail = apprComponent.occupancyMatrix[apprComponent.occupancyMatrix.length - 1];
+
+  const segAfterHead = apprComponent.occupancyMatrix[1];
+  const segBeforetail = apprComponent.occupancyMatrix[apprComponent.occupancyMatrix.length - 2];
+
+  let headRadii = [0];
+  let tailRadii = [0];
+
+  if (head[0] === segAfterHead[0]) {
+    if (head[1] < segAfterHead[1]) {
+      headRadii = [5, 5, 0, 0]
+    } else {
+      headRadii = [0, 0, 5, 5]
+    }
+  } else {
+    if (head[0] < segAfterHead[0]) {
+      headRadii = [5, 0, 0, 5]
+    } else {
+      headRadii = [0, 5, 5, 0]
+    }
+  }
+
+  if (tail[0] === segBeforetail[0]) {
+    if (tail[1] < segBeforetail[1]) {
+      tailRadii = [5, 5, 0, 0]
+    } else {
+      tailRadii = [0, 0, 5, 5]
+    }
+  } else {
+    if (tail[0] < segBeforetail[0]) {
+      tailRadii = [5, 0, 0, 5]
+    } else {
+      tailRadii = [0, 5, 5, 0]
+    }
+  }
 
   return <React.Fragment>{
     apprComponent.occupancyMatrix.map(
-      ([x, y]: number[]) => <canvasrect key={x + '' + y} x={x * tileWidth + startX} y={y * tileHeight + startY} width={tileWidth} height={tileHeight} fill={apprComponent.fill} stroke={'transparent'} strokeWeight={1} />
+      ([x, y]: number[], i: number) => <canvasrect
+        key={x + '-' + y}
+        x={x * tileWidth + startX}
+        y={y * tileHeight + startY}
+        width={tileWidth}
+        height={tileHeight}
+        fill={apprComponent.fill}
+        stroke={'transparent'}
+        strokeWeight={1}
+        radii={i === 0 ? headRadii : i === apprComponent.occupancyMatrix.length - 1 ? tailRadii : undefined}
+      />
     )}
     <canvascircle
-      x={head[0] * tileWidth + startX + tileWidth/2}
-      y={head[1] * tileHeight + startY + tileHeight/2}
-      r={0.2 * tileWidth}
+      x={head[0] * tileWidth + startX + tileWidth / 2}
+      y={head[1] * tileHeight + startY + tileHeight / 4}
+      r={0.1 * tileWidth}
       fill='white'
-      stroke='black'
+      stroke='#707070'
+      strokeWeight={5}
+    />
+    <canvascircle
+      x={head[0] * tileWidth + startX + tileWidth / 2}
+      y={head[1] * tileHeight + startY + tileHeight * 0.75}
+      r={0.1 * tileWidth}
+      fill='white'
+      stroke='#707070'
       strokeWeight={5}
     />
   </React.Fragment>

@@ -8,6 +8,8 @@ export interface IGridProps {
   gridSize: number;
 }
 
+const gutter = 5;
+
 export const Grid = (props: IGridProps) => {
   const { startX, startY, width, height, gridSize } = props;
   const tileHeight = height / gridSize;
@@ -28,7 +30,7 @@ export const Grid = (props: IGridProps) => {
           })
         }
         return <React.Fragment key={i}>
-          {rects.map((r, k) => <canvasrect key={i + '' + k} x={r.x} y={r.y} width={tileWidth} height={tileHeight} fill={r.even ? '#f0f0f0' : 'transparent'} strokeWeight={1} stroke={'transparent'}/>)}
+          {rects.map((r, k) => <canvasrect key={i + '' + k} x={r.x + gutter} y={r.y + gutter} width={tileWidth - gutter} height={tileHeight - gutter} fill={r.even ? '#f0f0f0' : 'transparent'} strokeWeight={1} stroke={'transparent'}/>)}
           <canvasline  x1={startX} y1={startY} x2={startX + width} y2={startY} strokeWeight={strokeWeight} stroke={'black'}/>
           <canvasline  x1={startX} y1={startY + height} x2={startX + width} y2={startY + height} strokeWeight={strokeWeight} stroke={'black'}/>
           <canvasline  x1={startX} y1={startY} x2={startX} y2={startY + height} strokeWeight={strokeWeight} stroke={'black'}/>

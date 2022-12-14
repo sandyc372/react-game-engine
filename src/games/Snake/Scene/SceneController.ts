@@ -2,6 +2,7 @@ import { runInAction } from "mobx";
 import { Entity } from "../../../ECS/Entity";
 
 let lastMoved: number = 0;
+let allSpaces: number[][] = [];
 
 const blink = () => {
   let lastFired = 0;
@@ -22,12 +23,30 @@ const blink = () => {
 export class SceneController {
   blinker = blink();
 
+  calculateFoodLocation = (occupiedSpc: number[][], gridSize: any) => {
+    if (allSpaces.length === 0) {
+      for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+          allSpaces.push([i, j])
+        }
+      }
+    }
+    const availableSpaces = allSpaces.filter(el => !occupiedSpc.some((el2: number[]) => el[0] === el2[0] && el[1] === el2[1]));
+    if (availableSpaces.length !== 0) {
+      const location = Math.floor(Math.random() * availableSpaces.length)
+      return availableSpaces[location]
+    } else {
+      // game over; no space to place food
+      return null
+    }
+  }
+
   moveSnake = (snakeEntity: any, gridSize: any) => {
     if (!snakeEntity) {
       return
     }
 
-    if (Date.now() - lastMoved < 100) {
+    if (Date.now() - lastMoved < 50) {
       return
     }
 
@@ -69,7 +88,7 @@ export class SceneController {
       directionComponent.isStopped = true;
       healthComponent.lastDamageTakenOn = Date.now();
       healthComponent.isRecovering = true;
-      healthComponent.value =  healthComponent.value - 10;
+      healthComponent.value = healthComponent.value - 1;
     }
   }
 
@@ -87,14 +106,40 @@ export class SceneController {
       }
       apprComponent.fill = this.blinker();
     } else {
-      apprComponent.fill = '#202020';
+      apprComponent.fill = '#707070';
     }
   }
 
-  update = (snakeEntity: any, gridSize: number) => {
+  eatFood = (foodEntity: any, snakeEntity: any, gridSize: any) => {
+    const snakeApprComponent = snakeEntity.components.get('appearance');
+    const snakeLenComponent = snakeEntity.components.get('length');
+    const scoreComponent = snakeEntity.components.get('score');
+    const foodPosComponent =  foodEntity.components.get('position');
+
+    if (snakeApprComponent.occupancyMatrix.some((el: number[][]) => el[0] === foodPosComponent.x && el[1] === foodPosComponent.y)) {
+      // snake has collided with the food
+      scoreComponent.value = scoreComponent.value + 1;
+      snakeLenComponent.value = snakeLenComponent.value + 1;
+      const newFoodLocation = this.calculateFoodLocation(snakeApprComponent.occupancyMatrix, gridSize);
+      if (newFoodLocation) {
+        foodPosComponent.x = newFoodLocation[0];
+        foodPosComponent.y = newFoodLocation[1]
+      }
+    }
+  }
+
+  update = (sceneEntities: any, gridSize: number) => {
     runInAction(() => {
+      const snakeEntity = sceneEntities?.get('snake');
+      const foodEntity = sceneEntities?.get('food');
+
+      if (!snakeEntity || !foodEntity) {
+        return
+      }
+
       this.moveSnake(snakeEntity, gridSize);
       this.checkDamageState(snakeEntity);
+      this.eatFood(foodEntity, snakeEntity, gridSize)
     })
   }
 }

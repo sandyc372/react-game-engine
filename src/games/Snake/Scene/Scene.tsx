@@ -16,6 +16,7 @@ import { Health } from './Components/Health';
 import { SceneController } from './SceneController';
 import { EVENTS } from '../../../Main/EventProvider';
 import { Position } from '../../../ECS/Components/Position';
+import { Score } from './Components/Score';
 
 export const Scene = observer((props: any) => {
   const gameContext = React.useContext(GameContext);
@@ -25,23 +26,24 @@ export const Scene = observer((props: any) => {
   React.useEffect(() => {
     // set up the entities
     runInAction(() => {
+      const initialSnakeLocation = translateMatrix(
+        [10, 10],
+        Array.from(Array(10), (el, i) => ([0, i]))
+      );
+      const initialFoodLocation = cntroller.current.calculateFoodLocation(initialSnakeLocation, GRID_SIZE)!
       ecs.entityMap.set('scene2', new Map());
 
       const sceneEntities = ecs.entityMap.get('scene2')
 
       const snakeEntity = new Entity('snake', 'snake');
-      snakeEntity.components.set('appearance', new Appearance(
-        translateMatrix(
-          [10, 10],
-          Array.from(Array(20), (el, i) => ([0, i]))
-        )
-      ))
-      snakeEntity.components.set('length', new Length(20));
+      snakeEntity.components.set('appearance', new Appearance(initialSnakeLocation))
+      snakeEntity.components.set('length', new Length(10));
       snakeEntity.components.set('direction', new Direction('up'))
-      snakeEntity.components.set('health', new Health(100))
+      snakeEntity.components.set('health', new Health(5));
+      snakeEntity.components.set('score', new Score(0));
 
       const foodEntity = new Entity('food', 'food');
-      foodEntity.components.set('position', new Position(20, 20));
+      foodEntity.components.set('position', new Position(initialFoodLocation[0], initialFoodLocation[1]));
 
       sceneEntities?.set(snakeEntity.name, snakeEntity);
       sceneEntities?.set(foodEntity.name, foodEntity);
@@ -51,8 +53,7 @@ export const Scene = observer((props: any) => {
   React.useLayoutEffect(() => {
     const update = () => {
       const sceneEntities = ecs.entityMap.get('scene2');
-      const snakeEntity = sceneEntities?.get('snake');
-      cntroller.current.update(snakeEntity, GRID_SIZE)
+      cntroller.current.update(sceneEntities, GRID_SIZE)
     }
     eventProvider.on(EVENTS.UPDATE, update);
     return () => eventProvider.off(EVENTS.UPDATE, update);

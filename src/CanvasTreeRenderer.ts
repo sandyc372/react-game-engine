@@ -65,15 +65,16 @@ export class CanvasTreeRenderer {
 
   renderRect = (node: ICanvasNode) => {
     let ctx = this.canvasRef.getContext('2d');
-    const { fill = 'transparent', stroke = 'black', strokeWeight = 1, x = 0, y = 0, width = 10, height = 10 } = node.attributes;
+    const { fill = 'transparent', stroke = 'black', strokeWeight = 1, x = 0, y = 0, width = 10, height = 10, radii = [0] } = node.attributes;
 
     ctx.fillStyle = fill;
     ctx.strokeStyle = stroke;
     ctx.lineWidth = strokeWeight;
 
     ctx.beginPath();
-    ctx.strokeRect(x, y, width, height);
-    ctx.fillRect(x, y, width, height);
+    ctx.roundRect(x, y, width, height, radii);
+    ctx.fill();
+    ctx.stroke();
     ctx.closePath();
   }
 

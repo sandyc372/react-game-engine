@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Entity } from '../../../ECS/Entity';
 
@@ -10,7 +11,7 @@ export interface IFoodProps {
   gridSize: number;
 }
 
-export const Food = (props: IFoodProps) => {
+export const Food = observer((props: IFoodProps) => {
   const { entity, startX, startY, width, height, gridSize } = props;
   const tileHeight = height / gridSize;
   const tileWidth = width / gridSize;
@@ -31,4 +32,4 @@ export const Food = (props: IFoodProps) => {
     stroke='black'
     strokeWeight={0.3 * radius}
   />
-}
+})
