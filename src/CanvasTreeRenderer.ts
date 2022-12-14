@@ -85,10 +85,10 @@ export class CanvasTreeRenderer {
     ctx.strokeStyle = stroke;
     ctx.lineWidth = strokeWeight;
 
-    ctx.beginPath(); // Start a new path
-    ctx.moveTo(x1, y1); // Move the pen to (30, 50)
-    ctx.lineTo(x2, y2); // Draw a line to (150, 100)
-    ctx.stroke(); // Render the path
+    ctx.beginPath(); 
+    ctx.moveTo(x1, y1); 
+    ctx.lineTo(x2, y2); 
+    ctx.stroke(); 
   }
 
   renderImage = (node: ICanvasNode) => {
