@@ -11,10 +11,11 @@ export interface IPlayAreaProps {
   width: number;
   height: number;
   gridSize: number;
+  turnSnake: any;
 }
 
 export const PlayArea = observer((props: IPlayAreaProps) => {
-  const { startX, startY, width, height, gridSize } = props;
+  const { startX, startY, width, height, gridSize, turnSnake } = props;
   const gameContext = React.useContext(GameContext);
   const { ecs, eventProvider } = gameContext;
   const sceneEntities = ecs.entityMap.get('scene2');
@@ -35,6 +36,7 @@ export const PlayArea = observer((props: IPlayAreaProps) => {
       width={width}
       height={height}
       gridSize={gridSize}
+      turn={turnSnake}
     />
     <Food
       entity={foodEntity}

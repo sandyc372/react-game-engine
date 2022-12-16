@@ -94,10 +94,11 @@ export interface ISnakeProps {
   width: number;
   height: number;
   gridSize: number;
+  turn: any;
 }
 
 export const Snake = observer((props: ISnakeProps) => {
-  const { entity, startX, startY, width, height, gridSize } = props;
+  const { entity, startX, startY, width, height, gridSize, turn } = props;
   const gameContext = React.useContext(GameContext);
   const { eventProvider } = gameContext;
   const tileHeight = height / gridSize;
@@ -109,11 +110,16 @@ export const Snake = observer((props: ISnakeProps) => {
     }
 
     const setDirection = (direction: string, isDown: boolean) => {
+      if ((Date.now() - lastMoved < 100)) {
+        return
+      }
       const directionComponent = entity.components.get('direction')!;
       if (isDown && !isOppositeDir(directionComponent.value, direction)) {
         directionComponent.value = direction;
         directionComponent.isStopped = false;
+        lastMoved = Date.now();
       }
+      turn?.();
     }
 
     const setUpKeyState = (evt: any, isDown: boolean) => setDirection('up', isDown)
@@ -132,7 +138,7 @@ export const Snake = observer((props: ISnakeProps) => {
       eventProvider.off(EVENTS.KEY_S, setDownKeyState);
       eventProvider.off(EVENTS.KEY_D, setRightKeyState);
     }
-  }, [entity]);
+  }, [entity, turn]);
 
   if (!entity) {
     return null

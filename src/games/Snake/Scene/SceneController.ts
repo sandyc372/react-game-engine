@@ -41,12 +41,12 @@ export class SceneController {
     }
   }
 
-  moveSnake = (snakeEntity: any, gridSize: any) => {
+  moveSnake = (snakeEntity: any, gridSize: any, force = false) => {
     if (!snakeEntity) {
       return
     }
 
-    if (Date.now() - lastMoved < 200) {
+    if ((Date.now() - lastMoved < 100) && !force) {
       return
     }
 

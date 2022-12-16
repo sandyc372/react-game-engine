@@ -48,7 +48,7 @@ export const Scene = observer((props: any) => {
       sceneEntities?.set(snakeEntity.name, snakeEntity);
       sceneEntities?.set(foodEntity.name, foodEntity);
     })
-  }, [])
+  }, []);
 
   React.useLayoutEffect(() => {
     const update = () => {
@@ -59,6 +59,12 @@ export const Scene = observer((props: any) => {
     return () => eventProvider.off(EVENTS.UPDATE, update);
   }, [])
 
+  const turnSnake = React.useCallback(() => {
+    const sceneEntities = ecs.entityMap.get('scene2');
+    const snakeEntity = sceneEntities?.get('snake');
+    cntroller.current.moveSnake(snakeEntity, GRID_SIZE, true)
+  }, [])
+
   return <canvaslayer>
     <PlayArea
       startX={0}
@@ -66,6 +72,7 @@ export const Scene = observer((props: any) => {
       width={WIDTH}
       height={HEIGHT - 50}
       gridSize={GRID_SIZE}
+      turnSnake={turnSnake}
     />
     <PlayerInfo
       startX={0}
