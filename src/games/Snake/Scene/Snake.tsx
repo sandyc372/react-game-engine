@@ -20,6 +20,73 @@ const isOppositeDir = (currDir: string, targetDir: string) => {
   }
 }
 
+const calculateRadii = (i: number, array: number[][], tileHeight: number) => {
+  const seg = array[i];
+  const beforeSeg = array[i - 1]
+  const afterSeg = array[i + 1];
+  let radii = undefined;
+
+  if (i === 0) {
+    if (seg[0] === afterSeg[0]) {
+      if (seg[1] < afterSeg[1]) {
+        radii = [tileHeight / 2, tileHeight / 2, 0, 0]
+      } else {
+        radii = [0, 0, tileHeight / 2, tileHeight / 2]
+      }
+    } else {
+      if (seg[0] < afterSeg[0]) {
+        radii = [tileHeight / 2, 0, 0, tileHeight / 2]
+      } else {
+        radii = [0, tileHeight / 2, tileHeight / 2, 0]
+      }
+    }
+  } else if (i === array.length - 1) {
+    if (seg[0] === beforeSeg[0]) {
+      if (seg[1] < beforeSeg[1]) {
+        radii = [tileHeight / 2, tileHeight / 2, 0, 0]
+      } else {
+        radii = [0, 0, tileHeight / 2, tileHeight / 2]
+      }
+    } else {
+      if (seg[0] < beforeSeg[0]) {
+        radii = [tileHeight / 2, 0, 0, tileHeight / 2]
+      } else {
+        radii = [0, tileHeight / 2, tileHeight / 2, 0]
+      }
+    }
+  } else {
+    const isCorner = beforeSeg[0] !== afterSeg[0] && beforeSeg[1] !== afterSeg[1];
+    if (isCorner) {
+      let config = '';
+      if ((seg[0] - 1) === beforeSeg[0] || (seg[0] - 1) === afterSeg[0]) {
+        config += 'w'
+      } else if ((seg[0] + 1) === beforeSeg[0] || (seg[0] + 1) === afterSeg[0]) {
+        config += 'e'
+      }
+      if ((seg[1] - 1) === beforeSeg[1] || (seg[1] - 1) === afterSeg[1]) {
+        config += 'n'
+      } else if ((seg[1] + 1) === beforeSeg[1] || (seg[1] + 1) === afterSeg[1]) {
+        config += 's'
+      }
+      switch (config) {
+        case 'en':
+          radii = [0, 0, 0, tileHeight / 2];
+          break;
+        case 'es':
+          radii = [tileHeight / 2, 0,  0, 0];
+          break;
+        case 'wn':
+          radii = [0, 0, tileHeight / 2, 0];
+          break;
+        case 'ws':
+          radii = [0, tileHeight / 2, 0, 0];
+          break;
+      }
+    }
+  }
+  return radii;
+}
+
 export interface ISnakeProps {
   entity?: Entity,
   startX: number;
@@ -74,41 +141,6 @@ export const Snake = observer((props: ISnakeProps) => {
   const apprComponent = entity.components.get('appearance')!;
 
   const head = apprComponent.occupancyMatrix[0];
-  const tail = apprComponent.occupancyMatrix[apprComponent.occupancyMatrix.length - 1];
-
-  const segAfterHead = apprComponent.occupancyMatrix[1];
-  const segBeforetail = apprComponent.occupancyMatrix[apprComponent.occupancyMatrix.length - 2];
-
-  let headRadii = [0];
-  let tailRadii = [0];
-
-  if (head[0] === segAfterHead[0]) {
-    if (head[1] < segAfterHead[1]) {
-      headRadii = [5, 5, 0, 0]
-    } else {
-      headRadii = [0, 0, 5, 5]
-    }
-  } else {
-    if (head[0] < segAfterHead[0]) {
-      headRadii = [5, 0, 0, 5]
-    } else {
-      headRadii = [0, 5, 5, 0]
-    }
-  }
-
-  if (tail[0] === segBeforetail[0]) {
-    if (tail[1] < segBeforetail[1]) {
-      tailRadii = [5, 5, 0, 0]
-    } else {
-      tailRadii = [0, 0, 5, 5]
-    }
-  } else {
-    if (tail[0] < segBeforetail[0]) {
-      tailRadii = [5, 0, 0, 5]
-    } else {
-      tailRadii = [0, 5, 5, 0]
-    }
-  }
 
   return <React.Fragment>{
     apprComponent.occupancyMatrix.map(
@@ -121,7 +153,7 @@ export const Snake = observer((props: ISnakeProps) => {
         fill={apprComponent.fill}
         stroke={'transparent'}
         strokeWeight={1}
-        radii={i === 0 ? headRadii : i === apprComponent.occupancyMatrix.length - 1 ? tailRadii : undefined}
+        radii={calculateRadii(i, apprComponent.occupancyMatrix, tileHeight)}
       />
     )}
     <canvascircle

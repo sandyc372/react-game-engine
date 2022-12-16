@@ -46,7 +46,7 @@ export class SceneController {
       return
     }
 
-    if (Date.now() - lastMoved < 50) {
+    if (Date.now() - lastMoved < 200) {
       return
     }
 
@@ -76,8 +76,8 @@ export class SceneController {
     }
 
     if (newOccMatrix.every((el, i) => {
-      const x = el[0];
-      const y = el[1];
+      const x: any = el[0];
+      const y: any = el[1];
       const isDuplicate: boolean = newOccMatrix.slice(0, i).some(pt => pt[0] === x && pt[1] === y);
       return x >= 0 && x < gridSize && y >= 0 && y < gridSize && !isDuplicate
     })) {

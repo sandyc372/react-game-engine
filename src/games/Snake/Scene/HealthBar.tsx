@@ -8,6 +8,8 @@ export interface IHealthBarProps {
   health: number;
 }
 
+export const interpolator = () => {}
+
 export const HealthBar = observer((props: IHealthBarProps) => {
   const { x, y, height, health } = props;
   const bars = [];

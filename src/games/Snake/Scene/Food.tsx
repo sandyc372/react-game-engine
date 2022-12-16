@@ -28,7 +28,7 @@ export const Food = observer((props: IFoodProps) => {
     x={x}
     y={y}
     r={radius - 0.3 * radius}
-    fill='black'
+    fill='#8fb9db'
     stroke='black'
     strokeWeight={0.3 * radius}
   />

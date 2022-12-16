@@ -4,9 +4,9 @@ import GameContext from './GameContext';
 import { CanvasTreeRenderer } from '../CanvasTreeRenderer';
 import { ECS } from '../ECS/ECS';
 
-export const HEIGHT = window.innerHeight - 50;
+export const HEIGHT = window.innerHeight - 100;
 export const WIDTH = HEIGHT;
-export const GRID_SIZE = 30;
+export const GRID_SIZE = 20;
 
 export const tileWidth = WIDTH / GRID_SIZE;
 export const tileHeight = HEIGHT / GRID_SIZE;
@@ -50,6 +50,18 @@ export const Game = (props: IGameProps) => {
         case "KeyD":
           eventProvider.trigger(EVENTS.KEY_D, event, true);
           break;
+        case "ArrowUp":
+          eventProvider.trigger(EVENTS.KEY_UP, event, true);
+          break;
+        case "ArrowDown":
+          eventProvider.trigger(EVENTS.KEY_DOWN, event, true);
+          break;
+        case "ArrowLeft":
+          eventProvider.trigger(EVENTS.KEY_LEFT, event, true);
+          break;
+        case "ArrowRight":
+          eventProvider.trigger(EVENTS.KEY_RIGHT, event, true);
+          break;
         default:
           break
       }
@@ -69,6 +81,18 @@ export const Game = (props: IGameProps) => {
           break;
         case "KeyD":
           eventProvider.trigger(EVENTS.KEY_D, event, false);
+          break;
+        case "ArrowUp":
+          eventProvider.trigger(EVENTS.KEY_UP, event, false);
+          break;
+        case "ArrowDown":
+          eventProvider.trigger(EVENTS.KEY_DOWN, event, false);
+          break;
+        case "ArrowLeft":
+          eventProvider.trigger(EVENTS.KEY_LEFT, event, false);
+          break;
+        case "ArrowRight":
+          eventProvider.trigger(EVENTS.KEY_RIGHT, event, false);
           break;
         default:
           break

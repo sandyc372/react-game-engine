@@ -7,6 +7,10 @@ export enum EVENTS {
   KEY_A = 'key_a',
   KEY_S = 'key_s',
   KEY_D = 'key_d',
+  KEY_UP = 'KEY_UP',
+  KEY_DOWN = 'KEY_DOWN',
+  KEY_LEFT = 'KEY_LEFT',
+  KEY_RIGHT = 'KEY_RIGHT',
   UPDATE = 'update'
 }
 
@@ -20,6 +24,10 @@ export class EventProvider {
     [EVENTS.KEY_W]: [],
     [EVENTS.KEY_A]: [],
     [EVENTS.KEY_S]: [],
+    [EVENTS.KEY_UP]: [],
+    [EVENTS.KEY_DOWN]: [],
+    [EVENTS.KEY_LEFT]: [],
+    [EVENTS.KEY_RIGHT]: [],
     [EVENTS.KEY_D]: []
   };
 
