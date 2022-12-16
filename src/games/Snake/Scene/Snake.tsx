@@ -110,16 +110,12 @@ export const Snake = observer((props: ISnakeProps) => {
     }
 
     const setDirection = (direction: string, isDown: boolean) => {
-      if ((Date.now() - lastMoved < 100)) {
-        return
-      }
       const directionComponent = entity.components.get('direction')!;
-      if (isDown && !isOppositeDir(directionComponent.value, direction)) {
+      if (isDown && !isOppositeDir(directionComponent.value, direction) && !directionComponent.isTurnScheduled) {
         directionComponent.value = direction;
         directionComponent.isStopped = false;
-        lastMoved = Date.now();
+        directionComponent.isTurnScheduled = true;
       }
-      turn?.();
     }
 
     const setUpKeyState = (evt: any, isDown: boolean) => setDirection('up', isDown)

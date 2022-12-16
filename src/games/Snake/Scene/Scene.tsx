@@ -62,7 +62,7 @@ export const Scene = observer((props: any) => {
   const turnSnake = React.useCallback(() => {
     const sceneEntities = ecs.entityMap.get('scene2');
     const snakeEntity = sceneEntities?.get('snake');
-    cntroller.current.moveSnake(snakeEntity, GRID_SIZE, true)
+    cntroller.current.moveSnake(snakeEntity, GRID_SIZE)
   }, [])
 
   return <canvaslayer>

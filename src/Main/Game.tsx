@@ -6,7 +6,7 @@ import { ECS } from '../ECS/ECS';
 
 export const HEIGHT = window.innerHeight - 100;
 export const WIDTH = HEIGHT;
-export const GRID_SIZE = 50;
+export const GRID_SIZE = 30;
 
 export const tileWidth = WIDTH / GRID_SIZE;
 export const tileHeight = HEIGHT / GRID_SIZE;

@@ -41,12 +41,8 @@ export class SceneController {
     }
   }
 
-  moveSnake = (snakeEntity: any, gridSize: any, force = false) => {
+  moveSnake = (snakeEntity: any, gridSize: any) => {
     if (!snakeEntity) {
-      return
-    }
-
-    if ((Date.now() - lastMoved < 100) && !force) {
       return
     }
 
@@ -58,9 +54,15 @@ export class SceneController {
     const direction = directionComponent.value;
     const length = lengthComponent.value;
 
+    if ((Date.now() - lastMoved < 100) && !directionComponent.isTurnScheduled) {
+      return
+    }
+
     if (directionComponent.isStopped) {
       return;
     }
+
+    directionComponent.isTurnScheduled = false;
 
     let delta = [
       direction === 'left' ? -1 : direction === 'right' ? 1 : 0,
